@@ -1,8 +1,8 @@
 {
-  "name": "js-react-lyc",
+  "name": "js-react-srt",
   "version": "0.1.0",
-  "keywords":["react","react-demo","antd","lrc"],
-  "description":"一个真正免费的在线歌词编辑网站，非常好用",
+  "keywords":["react","react-demo","antd","srt"],
+  "description":"使用react开发的一个在线制作srt格式字幕的网站，免费，开源。",
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@loadable/component": "^5.15.2",

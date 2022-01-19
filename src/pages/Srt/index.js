@@ -2,15 +2,10 @@ import React, { createRef } from 'react';
 import './index.scss'
 import { Button, Input, message, Modal, Spin } from 'antd'
 import wxLogo from '../../assets/weixin.png'
-let textAreaPlaceholder = `上面填写的歌曲信息，实际在播放歌曲的时候并不显示。
-如果想在歌词中显示歌曲信息，请将歌曲信息放在歌词里。如：
-你的答案
-词:林晨阳/刘涛
-编曲:谭侃侃
-演唱:阿冗
-……
-然后点击播放，在你觉得合适的时间，给这些信息打上tag即可。
-tips：当上一句唱完时，立即为下一句歌词打tag，显示效果会比较好一点
+let textAreaPlaceholder = `如果是双语字幕，原文和译文要在同一行，中间使用逗号（中英文均可）隔开
+如：
+他只是假仁假义，He puts his hand in your shirt and squeezes your tit till it's purple.
+他在找死，继续干活吧，Getting himself killed.
 `
 class Lyc extends React.Component {
   constructor(props) {
@@ -22,45 +17,52 @@ class Lyc extends React.Component {
       lycTextContent: '',
       lycList: [
         {
-          time: '00:00.00',
-          cont: '1.点击“上传歌曲”上传音乐',
-          timeReadOnly: true,
+          startTime: '00:00:00,000',
+          endTime: '00:00:00,200',
+          cont: '1.点击“上传视频”上传视频',
+          startTimeReadOnly: true,
           contReadOnly: true
         },
         {
-          time: '00:00.20',
-          cont: '2.点击"粘贴歌词"，把歌词粘贴到弹出框。程序自动会将连续空行合并成一行，但最好一句一行。',
-          timeReadOnly: true,
+          startTime: '00:00:00,200',
+          endTime: '00:00:00,300',
+          cont: '2.点击"粘贴台词"，把台词粘贴到弹出框。双语字幕的话，原文和译文在同一行，中间使用逗号（中英文均可）隔开。',
+          startTimeReadOnly: true,
           contReadOnly: true
         },
         {
-          time: '00:00.30',
-          cont: '3.点击"播放"，播放歌曲后，点击"打Tag"可在红色底（选中状态）一栏打上时间点',
-          timeReadOnly: true,
+          startTime: '00:00:00,300',
+          endTime: '00:00:00,400',
+          cont: '3.点击"播放"，播放视频后，点击"打Tag"可在红色底（选中状态）一栏打上时间点,第一下是开始时间tag，第二下是结束时间tag',
+          startTimeReadOnly: true,
           contReadOnly: true
         },
         {
-          time: '00:00.40',
+          startTime: '00:00:00,400',
+          endTime: '00:00:00,500',
           cont: '4.可以点击“选中此行”后，拖动进度条重新给该行打tag',
-          timeReadOnly: true,
+          startTimeReadOnly: true,
           contReadOnly: true
         },
         {
-          time: '00:00.50',
+          startTime: '00:00:00,500',
+          endTime: '00:00:00,600',
           cont: '5.在时间上双击，可以编辑时间',
-          timeReadOnly: true,
+          startTimeReadOnly: true,
           contReadOnly: true
         },
         {
-          time: '00:00.60',
-          cont: '6.在歌词上双击，可以编辑歌词。',
-          timeReadOnly: true,
+          startTime: '00:00:00,600',
+          endTime: '00:00:00,700',
+          cont: '6.在台词上双击，可以编辑台词。',
+          startTimeReadOnly: true,
           contReadOnly: true
         },
         {
-          time: '00:00.70',
-          cont: '7.制作完成后，点击"导出歌词"可以将生成的歌词导出来。格式为lyc。',
-          timeReadOnly: true,
+          startTime: '00:00:00,700',
+          endTime: '00:00:00,800',
+          cont: '7.制作完成后，点击"导出字幕"可以将生成的字幕导出来。格式为srt。',
+          startTimeReadOnly: true,
           contReadOnly: true
         }
       ],
@@ -92,13 +94,13 @@ class Lyc extends React.Component {
 
   timeEleClick = (lycObj, index) => {
     this.resetReadOnly()
-    lycObj.timeReadOnly = false
+    lycObj.startTimeReadOnly = false
     this.replaceLycList(lycObj, index)
   }
 
   timeEleBlur = (lycObj, index) => {
     // console.log('timeEleBlur:', index)
-    lycObj.timeReadOnly = true
+    lycObj.startTimeReadOnly = true
     this.replaceLycList(lycObj, index)
   }
   timeContChange = (value, lycObj, index) => {
@@ -154,7 +156,7 @@ class Lyc extends React.Component {
   resetReadOnly = () => {
     let lycList = this.state.lycList
     lycList.forEach(item => {
-      item.timeReadOnly = true
+      item.startTimeReadOnly = true
       item.contReadOnly = true
     })
     this.setState({
@@ -181,7 +183,7 @@ class Lyc extends React.Component {
       return {
         time: '',
         cont: lyc,
-        timeReadOnly: true,
+        startTimeReadOnly: true,
         contReadOnly: true
       }
     })
@@ -401,7 +403,7 @@ class Lyc extends React.Component {
 
                     <div className='editCont' onDoubleClick={() => this.timeEleClick(lycObj, index)} onBlur={() => this.timeEleBlur(lycObj, index)} title='可双击修改'>
                       {
-                        lycObj.timeReadOnly ? (
+                        lycObj.startTimeReadOnly ? (
                           <span>{lycObj.time}</span>
                         ) : (
                           <Input value={lycObj.time} onChange={(e) => this.timeContChange(e.target.value, lycObj, index)} allowClear></Input>

@@ -1,10 +1,10 @@
 import loadable from '@loadable/component';
-const Lyc = loadable(() => import('../pages/Lyc/index'));
-export const routeConfig= [
+const Srt = loadable(() => import('../pages/Srt/index'));
+export const routeConfig = [
   {
-    path:'/',
-    exact:true,
-    element: Lyc,
-    routes:[]
+    path: '/',
+    exact: true,
+    element: Srt,
+    routes: []
   }
 ]

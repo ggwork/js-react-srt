@@ -81,15 +81,7 @@ class Lyc extends React.Component {
 
   componentDidMount() {
     // eslint-disable-next-line
-    var wavesurfer = WaveSurfer.create({
-      container: '#lyc-wave',
-      waveColor: 'violet',
-      height: '90',
-      barWidth: 2,
-    });
-    this.setState({
-      wavesurfer
-    })
+
   }
 
   timeEleClick = (lycObj, index) => {
@@ -228,24 +220,24 @@ class Lyc extends React.Component {
       audioLoad: 'loading'
     })
     // 显示波形图
-    let { wavesurfer } = this.state
-    wavesurfer.load(audioUrl)
-    wavesurfer.on('ready', (res) => {
-      // this.showMessage('上传成功', 'success')
-      this.setState({
-        audioLoad: true
-      })
-    })
+    // let { wavesurfer } = this.state
+    // wavesurfer.load(audioUrl)
+    // wavesurfer.on('ready', (res) => {
+    //   // this.showMessage('上传成功', 'success')
+    //   this.setState({
+    //     audioLoad: true
+    //   })
+    // })
 
 
   }
 
   playAudio = () => {
-    this.state.wavesurfer.play()
+    // this.state.wavesurfer.play()
 
   }
   stopAudio = () => {
-    this.state.wavesurfer.pause()
+    // this.state.wavesurfer.pause()
     // this.showMessage('您还没有上传音乐', 'error')
   }
 

@@ -1,0 +1,29 @@
+.main{
+  width: 100%!important;
+  background-color: white;
+  
+  margin: auto;
+  box-sizing: border-box;
+  .m-logo{
+    font-weight: 300;
+    font-size: 32px;
+    color: #35495e;
+    letter-spacing: 1px;
+    text-decoration: none;
+    width: 1200px;
+    margin: auto;
+    padding: 10px;
+  }
+  .m-title{
+    height: 300px;
+    text-align: center;
+    line-height: 300px;
+    font-weight: 700;
+    background: linear-gradient(-141deg,#ecca1b,#f39526);
+    color: white;
+    font-size: 36px;
+  }
+  .cont{
+    
+  }
+}

@@ -1,6 +1,7 @@
 import loadable from '@loadable/component';
 const Home = loadable(() => import('../pages/Home/index'));
-const Srt = loadable(() => import('../pages/Srt/index'));
+const videoSrt = loadable(() => import('../pages/Srt/videoSrt'));
+const audioSrt = loadable(() => import('../pages/Srt/audioSrt.js'));
 const Me = loadable(() => import('../pages/Me/index'));
 export const routeConfig = [
   {
@@ -16,9 +17,15 @@ export const routeConfig = [
     routes: []
   },
   {
-    path: '/srt',
+    path: '/videoSrt',
     exact: true,
-    element: Srt,
+    element: videoSrt,
+    routes: []
+  },
+  {
+    path: '/audioSrt',
+    exact: true,
+    element: audioSrt,
     routes: []
   }
 ]

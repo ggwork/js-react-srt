@@ -1,9 +1,10 @@
 import React, { createRef } from 'react';
-import './index.scss'
+import './videoSrt.scss'
 import { Button, Input, message, Modal } from 'antd'
 import wxLogo from '../../assets/weixin.png'
-import { Player, BigPlayButton } from 'video-react';
+import { Player, BigPlayButton, VolumeMenuButton } from 'video-react';
 import { Link } from 'react-router-dom'
+import WeixinIcon from '../../components/weixinIcon'
 
 
 let textAreaPlaceholder = `如果是双语字幕，原文和译文要在同一行，中间使用逗号（中英文均可）隔开
@@ -378,7 +379,7 @@ class Srt extends React.Component {
   render() {
     let { srtList, srtTextModalVisible, currentIndex, startTimeOffset, stoInputReadOnly, videoUrl } = this.state
     return (
-      <div className='main'>
+      <div className='vs-main'>
         <Modal visible={srtTextModalVisible} title='粘贴台词' onOk={this.srtTextModalOk} wrapClassName='srtModal' onCancel={this.closeModal}>
           <div className='srt-m-w'>
             <Input.TextArea onChange={this.srtTextChange} className='srtModalText' placeholder={textAreaPlaceholder}></Input.TextArea>
@@ -467,6 +468,7 @@ class Srt extends React.Component {
           <div className='m-video-inner'>
             <Player src={videoUrl} ref={this.player}>
               <BigPlayButton position="center" />
+
             </Player>
           </div>
           <div className='m-v-tools'>
@@ -493,6 +495,7 @@ class Srt extends React.Component {
         <div className='dfoot'>
           <Link to='/me'></Link>
         </div>
+        <WeixinIcon></WeixinIcon>
       </div>
     )
   }

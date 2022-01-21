@@ -1,29 +1,89 @@
-.main{
+.home-main{
   width: 100%!important;
-  background-color: white;
-  
   margin: auto;
   box-sizing: border-box;
-  .m-logo{
+  .m-header{
     font-weight: 300;
     font-size: 32px;
     color: #35495e;
     letter-spacing: 1px;
     text-decoration: none;
-    width: 1200px;
+    width: 100%;
     margin: auto;
     padding: 10px;
+    background-color: white;
+    .m-h-name{
+      width: 1200px;
+      margin: auto;
+    }
   }
   .m-title{
-    height: 300px;
+    height:240px;
     text-align: center;
-    line-height: 300px;
+    line-height: 200px;
     font-weight: 700;
     background: linear-gradient(-141deg,#ecca1b,#f39526);
     color: white;
-    font-size: 36px;
+    font-size: 24px;
   }
-  .cont{
-    
+  .m-cont{
+    width: 1200px;
+    margin: -50px auto auto;
+    position: relative;
+    background: #fff;
+    padding: 20px 20px 50px;
+    box-shadow: 0 3px 6px 0 rgba(0,0,0,0.3);
+    min-height: 500px;
+    box-sizing: border-box;
+    .m-c-row{
+      width: 100%;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      .m-c-item{
+        width: 140px;
+        padding:10px;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        text-align: center;
+        
+      }
+      
+      .m-c-i-title{
+        text-align: center;
+        font-weight: bold;
+        height: 40px;
+        line-height: 40px;
+        font-size: 16px;
+      }
+      .m-c-i-icon{
+        margin-top: 10px;
+        width: 100%;
+        text-align: center;
+        img{
+          width: 80px;
+        }
+      }
+    }
   }
+
+  // .m-footer{
+  //   width: 100%;
+  //   background-color: white;
+  //   margin-top: 10px;
+  //   position: absolute;
+  //   height: 60px;
+  //   bottom: 0px;
+  //   left: 0px;
+  //   .f-inner{
+  //     width: 1200px;
+  //     margin: auto;
+  //     text-align: center;
+  //     height: 30px;
+  //     line-height: 30px;
+  //     font-size: 12px;
+  //     color: black;
+  //   }
+  // }
 }

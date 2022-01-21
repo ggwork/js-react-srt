@@ -1,0 +1,203 @@
+@import "~video-react/styles/scss/video-react.scss";
+
+.vs-main{
+  width: 1200px;
+  margin: auto;
+  .lyc-header{
+    background: white;
+    padding:10px;
+    box-sizing: border-box;
+    .lyc-tool{
+      height: 30px; 
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .tools{
+        display: flex;
+        align-items: center;
+        width: 300px;
+        flex-shrink: 0;
+        .tools-upload-btn{
+          position: relative;
+        }
+        .tools-upload-input{
+          position: absolute;
+          top:0;
+          left: 0;
+          opacity: 0;
+        }
+      }
+      .ant-btn-text{
+        text-decoration: underline;
+        color: blue;
+      }   
+      .lyc-au-name{
+        text-align: center;
+      }
+    }
+    .lyc-audio{
+      position: relative;
+      .lyc-progress{
+        width: 100%;
+        position: absolute;
+        bottom: 0px;
+        .lyc-p-w{
+          width: 100%;
+          height: 2px;
+          background: #eee;
+          .lyc-p-inner{
+            width: 0;
+            height: inherit;
+            background: blue;
+            &.active {
+              animation-play-state: running!important;
+            }
+            &.paused {
+              animation-play-state: paused!important;
+            }
+          }
+          
+        }
+      }
+      
+      .lyc-wave{
+        height: 90px;
+      }
+      .ant-spin{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+  }
+  .m-srt{
+    margin-top: 10px;
+    .tip{
+      padding: 10px;
+      box-sizing: border-box;
+      background-color: white;
+      border-bottom: 1px solid #eee;
+      .t-start-time{
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+        span{
+          width: 120px;
+
+        }
+        .ant-input{
+          width: 200px;
+          cursor: pointer;
+        }
+      }
+      .t-cont{
+        margin-top: 10px;
+        font-size: 12px;
+        span{
+          background-color: yellow;
+          margin-right: 10px;
+          user-select: none;
+          padding: 2px 5px;
+        }
+      }
+    } 
+    .srt-auth{
+      margin-top:10px;
+      .srt-a-item{
+        padding:10px;
+        display: flex;
+        align-items: center;
+        background: white;
+        span{
+          display: inline-block;
+          width: 70px;
+        }
+        .ant-input{
+          width: 200px;
+        }
+      }
+    }
+    .srt-content{
+      background: white;
+      box-sizing: border-box;
+      height: 660px;
+      overflow-y: scroll;
+      margin-top: 10px;
+      .srt-item{
+        padding:10px;
+        display: flex;
+        align-items: center;
+        height: 60px;
+        overflow: hidden;
+        border-bottom: 1px solid #eee;
+        &.active{
+          background-color: plum;
+        }
+        .rows{
+          width: 40px;
+          text-align: center;
+          background-color: cornflowerblue;
+          cursor: pointer;
+          flex-shrink: 0;
+        }
+        .time{
+          width: 80px;
+          flex-shrink: 0;
+          text-align: left;
+          margin-left: 20px;
+          .editCont{
+            span{
+              user-select: none;
+            }
+            .ant-input{
+              width: 120px;
+            }
+            
+          }
+          
+        }
+        .cont{
+          width: 100%;
+          margin-left: 20px;
+          .editCont2{
+            span{
+              user-select: none;
+            }
+            .ant-input{
+              width: 100%;
+            }
+          }
+        }
+        .operation{
+          width: 100px;
+          text-align: center;
+          
+          .ant-btn-text{
+            color: blue;
+          }
+        }
+      }
+    }
+    // .footer{
+    //   margin-top: 10px;
+    //   height: 50px;
+    //   line-height: 50px;
+    //   background-color: white;
+    //   text-align: center;
+    // }
+    
+  }
+}
+
+
+.srtModal{
+  .srt-m-w{
+    margin-top: 10px;
+    .srtModalText{
+      height: 300px;
+    }
+  }
+  
+}

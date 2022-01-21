@@ -1,22 +1,23 @@
 import React, { createRef } from 'react';
-import './videoSrt.scss'
-import { Button, Input, message, Modal } from 'antd'
-import wxLogo from '../../assets/weixin.png'
-import { Player, BigPlayButton, VolumeMenuButton } from 'video-react';
-import { Link } from 'react-router-dom'
-import WeixinIcon from '../../components/weixinIcon'
+import './audioSrt.scss'
+import { Button, Input, message, Modal, Spin } from 'antd'
 
 
-let textAreaPlaceholder = `如果是双语字幕，原文和译文要在同一行，中间使用逗号（中英文均可）隔开
-如：
-他只是假仁假义，He puts his hand in your shirt and squeezes your tit till it's purple.
-他在找死，继续干活吧，Getting himself killed.
+
+let textAreaPlaceholder = `上面填写的歌曲信息，实际在播放歌曲的时候并不显示。
+如果想在歌词中显示歌曲信息，请将歌曲信息放在歌词里。如：
+你的答案
+词:林晨阳/刘涛
+编曲:谭侃侃
+演唱:阿冗
+……
+然后点击播放，在你觉得合适的时间，给这些信息打上tag即可。
+tips：当上一句唱完时，立即为下一句歌词打tag，显示效果会比较好一点
 `
 class Srt extends React.Component {
   constructor(props) {
     super(props)
     this.srtContentRef = createRef(null)
-    this.player = createRef(null)
     this.state = {
       messageVisible: false,
       srtTextModalVisible: false,
@@ -25,7 +26,7 @@ class Srt extends React.Component {
         {
           startTime: '00:00:00,000',
           endTime: '00:00:00,200',
-          cont: '1.点击“上传视频”上传视频',
+          cont: '1.点击“上传音频”上传音频',
           startTimeReadOnly: true,
           contReadOnly: true
         },
@@ -39,7 +40,7 @@ class Srt extends React.Component {
         {
           startTime: '00:00:00,300',
           endTime: '00:00:00,400',
-          cont: '3.点击"播放"，播放视频后，点击"打Tag"可在红色底（选中状态）一栏打上时间点,第一下是开始时间tag，第二下是结束时间tag',
+          cont: '3.点击"播放"，播放音频后，点击"开始tag/结束Tag"可在红色底（选中状态）一栏打上时间点,开始tag是字幕开始的时间，结束tag是字幕结束的时间',
           startTimeReadOnly: true,
           contReadOnly: true
         },
@@ -72,17 +73,26 @@ class Srt extends React.Component {
           contReadOnly: true
         }
       ],
-      videoFile: {},
+      audioFile: {},
       currentIndex: 0,
-      videoLoad: '',
       startTimeOffset: '200',
-      stoInputReadOnly: true
+      stoInputReadOnly: true,
+      audioLoad: '',
+      wavesurfer: null,
     }
   }
 
   componentDidMount() {
     // eslint-disable-next-line
-
+    var wavesurfer = WaveSurfer.create({
+      container: '#lyc-wave',
+      waveColor: 'violet',
+      height: '90',
+      barWidth: 2,
+    });
+    this.setState({
+      wavesurfer
+    })
   }
 
   startTimeEleClick = (srtObj, index) => {
@@ -210,15 +220,25 @@ class Srt extends React.Component {
 
   nativeUploadChange = (e) => {
     let file = e.target.files[0]
-    let videoUrl = URL.createObjectURL(file)
+    let audioUrl = URL.createObjectURL(file)
     console.log('file:', file)
-    console.log('videoUrl:', videoUrl)
+    console.log('audioUrl:', audioUrl)
     this.setState({
-      videoFile: file,
-      videoLoad: 'loading',
-      videoUrl,
+      audioFile: file,
+      audioUrl,
+      audioLoad: 'loading'
     })
-
+    // 显示波形图
+    let { wavesurfer } = this.state
+    console.log('wavesurfer:', wavesurfer)
+    wavesurfer.load(audioUrl)
+    wavesurfer.on('ready', (res) => {
+      console.log('ready')
+      this.showMessage('上传成功', 'success')
+      this.setState({
+        audioLoad: true
+      })
+    })
   }
 
   checkedRow = (index) => {
@@ -299,10 +319,10 @@ class Srt extends React.Component {
 
   // 导出歌词
   exportSrt = () => {
-    let { videoFile, srtList } = this.state
-    // console.log('videoFile:', videoFile)
-    if (videoFile.name) {
-      let srtFileName = videoFile.name.split('.')[0]
+    let { audioFile, srtList } = this.state
+    // console.log('audioFile:', audioFile)
+    if (audioFile.name) {
+      let srtFileName = audioFile.name.split('.')[0]
       let content = ''
       for (let i = 0; i < srtList.length; i++) {
         let item = srtList[i]
@@ -362,22 +382,25 @@ class Srt extends React.Component {
       })
     } else {
       this.showMessage('格式不对，必须是数字', 'error')
+      this.setState({
+        audioUrl: ''
+      })
     }
 
   }
-  playVideo = () => {
-    let player = this.player.current
-    player.play()
-  }
-  stopVideo = () => {
-    let player = this.player.current
-    player.stop()
-  }
 
 
+  playAudio = () => {
+    this.state.wavesurfer.play()
+
+  }
+  stopAudio = () => {
+    this.state.wavesurfer.pause()
+    // this.showMessage('您还没有上传音乐', 'error')
+  }
 
   render() {
-    let { srtList, srtTextModalVisible, currentIndex, startTimeOffset, stoInputReadOnly, videoUrl } = this.state
+    let { srtList, srtTextModalVisible, currentIndex, startTimeOffset, stoInputReadOnly, audioLoad, audioFile } = this.state
     return (
       <div className='vs-main'>
         <Modal visible={srtTextModalVisible} title='粘贴台词' onOk={this.srtTextModalOk} wrapClassName='srtModal' onCancel={this.closeModal}>
@@ -385,6 +408,31 @@ class Srt extends React.Component {
             <Input.TextArea onChange={this.srtTextChange} className='srtModalText' placeholder={textAreaPlaceholder}></Input.TextArea>
           </div>
         </Modal>
+
+        <div className='lyc-header'>
+          <div className='lyc-tool'>
+            <div className='tools tools1'>
+              <Button type='text' onClick={this.playAudio}>播放</Button>
+              <Button type='text' onClick={this.stopAudio}>暂停</Button>
+              <Button type='text' onClick={this.exportSrt}>打Tag</Button>
+            </div>
+            <div className='lyc-au-name'> {audioFile.name}</div>
+            <div className='tools tools2'>
+              <Button type='text' className='tools-upload-btn' >
+                上传音频
+                <input type='file' onChange={this.nativeUploadChange} className='tools-upload-input' accept='audio/*' />
+              </Button>
+              <Button type='text' onClick={this.showLycTextModal}>粘贴台词</Button>
+              <Button type='text' onClick={this.exportLyc}>导出字幕</Button>
+            </div>
+          </div>
+          <div className='lyc-audio'>
+
+            <div className='lyc-wave' id='lyc-wave'></div>
+            {audioLoad === 'loading' ? <Spin></Spin> : ''}
+          </div>
+        </div>
+
         <div className='m-srt'>
           <div className='tip'>
             <div className='t-start-time'>
@@ -457,45 +505,7 @@ class Srt extends React.Component {
               })
             }
           </div>
-          {/* <div className='footer'>
-            有事联系，v信:guo330504
-          </div> */}
-          <div className='side'>
-            <img src={wxLogo} alt='微信：guo330504' title='微信：guo330504'></img>
-          </div>
         </div>
-        <div className='m-video'>
-          <div className='m-video-inner'>
-            <Player src={videoUrl} ref={this.player}>
-              <BigPlayButton position="center" />
-
-            </Player>
-          </div>
-          <div className='m-v-tools'>
-            <div className='srt-header'>
-              <div className='tools'>
-                <Button className='tools-upload-btn' >
-                  上传视频
-                  <input type='file' onChange={this.nativeUploadChange} className='tools-upload-input' accept='video/*' />
-                </Button>
-                <Button onClick={this.showSrtTextModal}>粘贴台词</Button>
-                <Button onClick={this.exportSrt}>导出台词</Button>
-              </div>
-              <div className='tools'>
-                <Button onClick={this.playVideo}>播放</Button>
-                <Button onClick={this.stopVideo}>暂停</Button>
-              </div>
-              <div className='tools'>
-                <Button onClick={this.tagSrtStart} type="primary">开始Tag</Button>
-                <Button onClick={this.tagSrtEnd} type="primary">结束Tag</Button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className='dfoot'>
-          <Link to='/me'></Link>
-        </div>
-        <WeixinIcon></WeixinIcon>
       </div>
     )
   }

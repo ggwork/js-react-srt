@@ -2,7 +2,6 @@ import React, { createRef } from 'react';
 import './videoSrt.scss'
 import { Button, Input, message, Modal } from 'antd'
 import { Player, BigPlayButton, LoadingSpinner, ControlBar, VolumeMenuButton, PlayProgressBar } from 'video-react';
-import { Link } from 'react-router-dom'
 
 
 let textAreaPlaceholder = `如果是双语字幕，原文和译文要在同一行，中间使用逗号（中英文均可）隔开
@@ -38,7 +37,7 @@ class Srt extends React.Component {
         {
           startTime: '00:00:00,300',
           endTime: '00:00:00,400',
-          cont: '3.点击"播放"，播放视频后，点击"打Tag"可在红色底（选中状态）一栏打上时间点,第一下是开始时间tag，第二下是结束时间tag',
+          cont: '3.点击"播放"，播放音频后，点击"开始tag/结束Tag"可在红色底（选中状态）一栏打上时间点,开始tag是字幕开始的时间，结束tag是字幕结束的时间',
           startTimeReadOnly: true,
           contReadOnly: true
         },
@@ -388,16 +387,6 @@ class Srt extends React.Component {
     player.stop()
   }
 
-  bigBtnPlay = (res) => {
-    console.log('bigBtnPlay:', res)
-    let player = this.player.current
-    let readyState = player.getState().player.readyState
-    console.log('bigBtnPlay:', res)
-    console.log('readyState:', readyState)
-  }
-
-
-
   onError = (res) => {
     // let eventPhase = res.eventPhase
     // 0	string	
@@ -518,7 +507,7 @@ class Srt extends React.Component {
         <div className='m-video'>
           <div className='m-video-inner'>
             <Player src={videoUrl} ref={this.player} onError={this.onError} onLoadedData={this.videoLoaded}>
-              <BigPlayButton position="center" onClick={this.bigBtnPlay} />
+              <BigPlayButton position="center" />
               <LoadingSpinner></LoadingSpinner>
               <ControlBar autoHide={false} className="m-v-controller">
                 {/* <PlaybackRateMenuButton rates={[2, 1, 0.5, 0.1]} /> */}
@@ -549,9 +538,6 @@ class Srt extends React.Component {
               </div>
             </div>
           </div>
-        </div>
-        <div className='dfoot'>
-          <Link to='/me'></Link>
         </div>
       </div>
     )

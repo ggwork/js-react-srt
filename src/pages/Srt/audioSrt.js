@@ -220,25 +220,27 @@ class Srt extends React.Component {
 
   nativeUploadChange = (e) => {
     let file = e.target.files[0]
-    let audioUrl = URL.createObjectURL(file)
-    console.log('file:', file)
-    console.log('audioUrl:', audioUrl)
-    this.setState({
-      audioFile: file,
-      audioUrl,
-      audioLoad: 'loading'
-    })
-    // 显示波形图
-    let { wavesurfer } = this.state
-    console.log('wavesurfer:', wavesurfer)
-    wavesurfer.load(audioUrl)
-    wavesurfer.on('ready', (res) => {
-      console.log('ready')
-      this.showMessage('上传成功', 'success')
+    if (file) {
+      let audioUrl = URL.createObjectURL(file)
+      console.log('file:', file)
+      console.log('audioUrl:', audioUrl)
       this.setState({
-        audioLoad: true
+        audioFile: file,
+        audioUrl,
+        audioLoad: 'loading'
       })
-    })
+      // 显示波形图
+      let { wavesurfer } = this.state
+      console.log('wavesurfer:', wavesurfer)
+      wavesurfer.load(audioUrl)
+      wavesurfer.on('ready', (res) => {
+        console.log('ready')
+        this.showMessage('上传成功', 'success')
+        this.setState({
+          audioLoad: true
+        })
+      })
+    }
   }
 
   checkedRow = (index) => {
@@ -248,19 +250,14 @@ class Srt extends React.Component {
   }
 
   tagSrtStart = () => {
-    let { startTimeOffset = 0 } = this.state
-    // 获取player
-    let player = this.player.current.getState().player
-    // console.log('this.player:', this.player.current)
-    // window.player = this.player
-    let { currentIndex, srtList } = this.state
-    let currentTime = player.currentTime
+    let { startTimeOffset = 0, wavesurfer, currentIndex, srtList } = this.state
+
+    let currentTime = wavesurfer.getCurrentTime()
     let stoSecond = startTimeOffset / 1000
     if (currentTime > stoSecond) {
       currentTime = currentTime - stoSecond
     }
-    // console.log('player.currentTime:', player.currentTime)
-    // console.log('startTimeOffset:', startTimeOffset)
+
     let newTime = this.formatTime(currentTime)
     let srtObj = srtList[currentIndex]
     srtObj.startTime = newTime
@@ -269,12 +266,9 @@ class Srt extends React.Component {
   }
 
   tagSrtEnd = () => {
-    // 获取player
-    let player = this.player.current.getState().player
-    // console.log('this.player:', this.player.current)
-    // window.player = this.player
-    let { currentIndex, srtList } = this.state
-    let currentTime = player.currentTime
+
+    let { currentIndex, srtList, wavesurfer } = this.state
+    let currentTime = wavesurfer.getCurrentTime()
     let newTime = this.formatTime(currentTime)
     let srtObj = srtList[currentIndex]
     srtObj.endTime = newTime
@@ -328,7 +322,7 @@ class Srt extends React.Component {
         let item = srtList[i]
 
         if (item.startTime && item.endTime) {
-          content += (i + 1) + '\n'
+          content += i + '\n'
           content += item.startTime + ' --> ' + item.endTime + '\n'
           let contArr = item.cont.split(/,|，/g)
           content += contArr[0] + '\n'
@@ -343,7 +337,7 @@ class Srt extends React.Component {
       }
       this.download(srtFileName + '.srt', content)
     } else {
-      this.showMessage('视频文件不存在，请先上传视频', 'error')
+      this.showMessage('音频文件不存在，请先上传音频', 'error')
     }
   }
   download = (filename, text) => {
@@ -414,7 +408,8 @@ class Srt extends React.Component {
             <div className='tools tools1'>
               <Button type='text' onClick={this.playAudio}>播放</Button>
               <Button type='text' onClick={this.stopAudio}>暂停</Button>
-              <Button type='text' onClick={this.exportSrt}>打Tag</Button>
+              <Button type='text' onClick={this.tagSrtStart}>开始Tag</Button>
+              <Button type='text' onClick={this.tagSrtEnd}>结束Tag</Button>
             </div>
             <div className='lyc-au-name'> {audioFile.name}</div>
             <div className='tools tools2'>
@@ -422,8 +417,8 @@ class Srt extends React.Component {
                 上传音频
                 <input type='file' onChange={this.nativeUploadChange} className='tools-upload-input' accept='audio/*' />
               </Button>
-              <Button type='text' onClick={this.showLycTextModal}>粘贴台词</Button>
-              <Button type='text' onClick={this.exportLyc}>导出字幕</Button>
+              <Button type='text' onClick={this.showSrtTextModal}>粘贴台词</Button>
+              <Button type='text' onClick={this.exportSrt}>导出字幕</Button>
             </div>
           </div>
           <div className='lyc-audio'>

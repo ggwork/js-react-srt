@@ -213,14 +213,17 @@ class Srt extends React.Component {
 
   nativeUploadChange = (e) => {
     let file = e.target.files[0]
-    let videoUrl = URL.createObjectURL(file)
-    console.log('file:', file)
-    console.log('videoUrl:', videoUrl)
-    this.setState({
-      videoFile: file,
-      videoLoad: 'loading',
-      videoUrl,
-    })
+    if (file) {
+      let videoUrl = URL.createObjectURL(file)
+      // console.log('file:', file)
+      // console.log('videoUrl:', videoUrl)
+      this.setState({
+        videoFile: file,
+        videoLoad: 'loading',
+        videoUrl,
+      })
+    }
+
   }
 
   checkedRow = (index) => {
@@ -310,7 +313,7 @@ class Srt extends React.Component {
         let item = srtList[i]
 
         if (item.startTime && item.endTime) {
-          content += (i + 1) + '\n'
+          content += i + '\n'
           content += item.startTime + ' --> ' + item.endTime + '\n'
           let contArr = item.cont.split(/,|，/g)
           content += contArr[0] + '\n'

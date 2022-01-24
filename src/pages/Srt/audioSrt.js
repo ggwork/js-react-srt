@@ -28,6 +28,7 @@ class Srt extends React.Component {
           endTime: '00:00:00,200',
           cont: '1.点击“上传音频”上传音频',
           startTimeReadOnly: true,
+          endTimeReadOnly: true,
           contReadOnly: true
         },
         {
@@ -35,6 +36,7 @@ class Srt extends React.Component {
           endTime: '00:00:00,300',
           cont: '2.点击"粘贴台词"，把台词粘贴到弹出框。双语字幕的话，原文和译文在同一行，中间使用逗号（中英文均可）隔开。',
           startTimeReadOnly: true,
+          endTimeReadOnly: true,
           contReadOnly: true
         },
         {
@@ -42,6 +44,7 @@ class Srt extends React.Component {
           endTime: '00:00:00,400',
           cont: '3.点击"播放"，播放音频后，点击"开始tag/结束Tag"可在红色底（选中状态）一栏打上时间点,开始tag是字幕开始的时间，结束tag是字幕结束的时间',
           startTimeReadOnly: true,
+          endTimeReadOnly: true,
           contReadOnly: true
         },
         {
@@ -49,6 +52,7 @@ class Srt extends React.Component {
           endTime: '00:00:00,500',
           cont: '4.可以点击“选中此行”后，拖动进度条重新给该行打tag',
           startTimeReadOnly: true,
+          endTimeReadOnly: true,
           contReadOnly: true
         },
         {
@@ -56,6 +60,7 @@ class Srt extends React.Component {
           endTime: '00:00:00,600',
           cont: '5.在时间上双击，可以编辑时间',
           startTimeReadOnly: true,
+          endTimeReadOnly: true,
           contReadOnly: true
         },
         {
@@ -63,6 +68,7 @@ class Srt extends React.Component {
           endTime: '00:00:00,700',
           cont: '6.在台词上双击，可以编辑台词。',
           startTimeReadOnly: true,
+          endTimeReadOnly: true,
           contReadOnly: true
         },
         {
@@ -70,6 +76,7 @@ class Srt extends React.Component {
           endTime: '00:00:00,800',
           cont: '7.制作完成后，点击"导出字幕"可以将生成的字幕导出来。格式为srt。',
           startTimeReadOnly: true,
+          endTimeReadOnly: true,
           contReadOnly: true
         }
       ],
@@ -109,6 +116,7 @@ class Srt extends React.Component {
   timeEleBlur = (srtObj, index) => {
     // console.log('timeEleBlur:', index)
     srtObj.startTimeReadOnly = true
+    srtObj.endTimeReadOnly = true
     this.replaceSrtList(srtObj, index)
   }
   timeContChange = (label, value, srtObj, index) => {
@@ -189,6 +197,7 @@ class Srt extends React.Component {
         time: '',
         cont: srt,
         startTimeReadOnly: true,
+        endTimeReadOnly: true,
         contReadOnly: true
       }
     })
@@ -222,8 +231,6 @@ class Srt extends React.Component {
     let file = e.target.files[0]
     if (file) {
       let audioUrl = URL.createObjectURL(file)
-      console.log('file:', file)
-      console.log('audioUrl:', audioUrl)
       this.setState({
         audioFile: file,
         audioUrl,
@@ -231,7 +238,7 @@ class Srt extends React.Component {
       })
       // 显示波形图
       let { wavesurfer } = this.state
-      console.log('wavesurfer:', wavesurfer)
+
       wavesurfer.load(audioUrl)
       wavesurfer.on('ready', (res) => {
         console.log('ready')
@@ -311,6 +318,40 @@ class Srt extends React.Component {
     return hour + ':' + min + ':' + seconds + ',' + mill
   }
 
+
+  formatTime2Mill = (timeStr) => {
+    // 转毫秒前格式已经经过验证，所以这里的格式肯定是正确的
+    let timeArr1 = timeStr.split(',')
+    let mill = Number(timeArr1[1])
+    let timeArr2 = timeArr1[0].split(':')
+    let hours = Number(timeArr2[0])
+    let mins = Number(timeArr2[1])
+    let seconds = Number(timeArr2[2])
+    let totalMill = hours * 3600000 + mins * 60000 + seconds * 1000 + mill
+    return totalMill
+
+  }
+
+
+  validTime = (index, startTime, endTime) => {
+    let { srtList } = this.state
+    let startTimeMill = this.formatTime2Mill(startTime)
+    let endTimeMill = this.formatTime2Mill(endTime)
+    if (startTimeMill > endTimeMill) {
+      this.showMessage(`第${index + 1}行开始时间不能大于结束时间`, 'error')
+      return false
+    } else {
+      if (index > 0) {
+        // 前一个时间段的结束时间
+        let preEndTime = srtList[index - 1].endTime
+        if (startTimeMill < this.formatTime2Mill(preEndTime)) {
+          this.showMessage(`第${index + 1}行开始时间不能小于第${index}行结束时间`, 'error')
+          return false
+        }
+      }
+    }
+    return true
+  }
   // 导出歌词
   exportSrt = () => {
     let { audioFile, srtList } = this.state
@@ -318,10 +359,15 @@ class Srt extends React.Component {
     if (audioFile.name) {
       let srtFileName = audioFile.name.split('.')[0]
       let content = ''
+      let timeReg = /^[0-2][0-9]:[0-5][0-9]:[0-5][0-9],\d{0,3}$/
       for (let i = 0; i < srtList.length; i++) {
         let item = srtList[i]
 
-        if (item.startTime && item.endTime) {
+        if (item.startTime && timeReg.test(item.startTime) && item.endTime && timeReg.test(item.endTime)) {
+          if (!this.validTime(i, item.startTime, item.endTime)) {
+            return
+          }
+
           content += i + '\n'
           content += item.startTime + ' --> ' + item.endTime + '\n'
           let contArr = item.cont.split(/,|，/g)
@@ -332,7 +378,8 @@ class Srt extends React.Component {
           // 多添加一个空行
           content += '\n'
         } else {
-          // this.showMessage(`第{i}行的开始时间和结束时间不能为空`, 'error')
+          this.showMessage(`第${i + 1}行的开始时间或者结束时间格式错误`, 'error')
+          return
         }
       }
       this.download(srtFileName + '.srt', content)
@@ -464,7 +511,7 @@ class Srt extends React.Component {
                           srtObj.startTimeReadOnly ? (
                             <span>{srtObj.startTime}</span>
                           ) : (
-                            <Input value={srtObj.startTime} onChange={(e) => this.timeContChange('startTime', e.target.value, srtObj, index)} allowClear></Input>
+                            <Input value={srtObj.startTime} onChange={(e) => this.timeContChange('startTime', e.target.value, srtObj, index)} onBlur={() => this.timeEleBlur(srtObj, index)}></Input>
                           )
                         }
                       </div>
@@ -472,10 +519,10 @@ class Srt extends React.Component {
                     <div className='time'>
                       <div className='editCont' onDoubleClick={() => this.endTimeEleClick(srtObj, index)} onBlur={() => this.timeEleBlur(srtObj, index)} title='可双击修改'>
                         {
-                          srtObj.startTimeReadOnly ? (
+                          srtObj.endTimeReadOnly ? (
                             <span>{srtObj.endTime}</span>
                           ) : (
-                            <Input value={srtObj.endTime} onChange={(e) => this.timeContChange('endTime', e.target.value, srtObj, index)} allowClear></Input>
+                            <Input value={srtObj.endTime} onChange={(e) => this.timeContChange('endTime', e.target.value, srtObj, index)} onBlur={() => this.timeEleBlur(srtObj, index)}></Input>
                           )
                         }
                       </div>

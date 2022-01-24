@@ -88,7 +88,7 @@
               user-select: none;
             }
             .ant-input{
-              width: 120px;
+              padding: 5px;
             }
             
           }
@@ -136,6 +136,19 @@
       flex-shrink: 0;
       .video-react-current-time,.video-react-time-divider,.video-react-duration{
         display: none;
+      }
+      .video-react-slider-vertical{
+        .video-react-volume-level{
+          &::before{
+            left:-0.5em;
+          }
+        }
+        
+      }
+      .video-react-play-progress{
+        &::before{
+          top:-0.5em;
+        }
       }
       // .video-react-big-play-button-center{
       //   display: none;

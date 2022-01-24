@@ -13,12 +13,7 @@ class Home extends React.Component {
   }
 
   navigate = (path) => {
-    if (path.includes('http')) {
-      window.location.href = path
-    } else {
-      console.log('this.props.history:', this.props.history)
-      this.props.history.push(path)
-    }
+    window.location.href = path
   }
   render() {
     return (
@@ -38,7 +33,7 @@ class Home extends React.Component {
                 </div>
               </Link>
             </div>
-            <div className='m-c-item' onClick={() => { this.navigate('/audioSrt') }}>
+            <div className='m-c-item'>
               <Link to='/audioSrt'>
                 <div className='m-c-i-title'>音频制作字幕</div>
                 <div className='m-c-i-icon'>

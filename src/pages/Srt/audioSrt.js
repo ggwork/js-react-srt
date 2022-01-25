@@ -443,7 +443,7 @@ class Srt extends React.Component {
   render() {
     let { srtList, srtTextModalVisible, currentIndex, startTimeOffset, stoInputReadOnly, audioLoad, audioFile } = this.state
     return (
-      <div className='vs-main'>
+      <div className='as-main'>
         <Modal visible={srtTextModalVisible} title='粘贴台词' onOk={this.srtTextModalOk} wrapClassName='srtModal' onCancel={this.closeModal}>
           <div className='srt-m-w'>
             <Input.TextArea onChange={this.srtTextChange} className='srtModalText' placeholder={textAreaPlaceholder}></Input.TextArea>
